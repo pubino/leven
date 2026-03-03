@@ -1,0 +1,14 @@
+# Xcode
+Leven.xcodeproj/
+xcuserdata/
+*.xcscmblueprint
+DerivedData/
+
+# macOS
+.DS_Store
+
+# Claude
+.claude/
+
+# Project notes
+SHARED_TASK_NOTES.md

@@ -35,13 +35,41 @@ Or open `Leven.xcodeproj` in Xcode after generating.
 
 ## Releasing
 
-```bash
-# Tag, sign, and push
-git tag -s vX.Y.Z -m "vX.Y.Z"
-git push origin vX.Y.Z
+Requires a Developer ID certificate and an app-specific password stored via:
 
-# Create the GitHub release
-gh release create vX.Y.Z --title "vX.Y.Z" --notes "Release notes here."
+```bash
+xcrun notarytool store-credentials notary --apple-id YOUR_APPLE_ID --team-id YOUR_TEAM_ID
+```
+
+Then to cut a release:
+
+```bash
+VERSION=X.Y.Z
+
+# 1. Tag and push
+git tag -s v$VERSION -m "v$VERSION"
+git push origin v$VERSION
+
+# 2. Build a signed release archive
+xcodegen generate
+xcodebuild -project Leven.xcodeproj -scheme Leven -configuration Release \
+  -archivePath /tmp/Leven.xcarchive archive \
+  CODE_SIGN_IDENTITY="Developer ID Application" CODE_SIGN_STYLE=Manual
+
+# 3. Create a DMG
+rm -rf /tmp/Leven-dmg-staging && mkdir /tmp/Leven-dmg-staging
+cp -R /tmp/Leven.xcarchive/Products/Applications/Leven.app /tmp/Leven-dmg-staging/
+ln -s /Applications /tmp/Leven-dmg-staging/Applications
+hdiutil create -volname Leven -srcfolder /tmp/Leven-dmg-staging -ov -format UDZO \
+  /tmp/Leven-v$VERSION.dmg
+
+# 4. Notarize and staple
+xcrun notarytool submit /tmp/Leven-v$VERSION.dmg --keychain-profile notary --wait
+xcrun stapler staple /tmp/Leven-v$VERSION.dmg
+
+# 5. Create GitHub release and upload
+gh release create v$VERSION --title "v$VERSION" --notes "Release notes here."
+gh release upload v$VERSION /tmp/Leven-v$VERSION.dmg
 ```
 
 ## License

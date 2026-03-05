@@ -32,3 +32,18 @@ Or open `Leven.xcodeproj` in Xcode after generating.
 - View current screen recording permission status.
 - Reset the TCC permission (requires app restart for macOS to re-prompt).
 - Open System Settings to the Screen Recording privacy pane.
+
+## Releasing
+
+```bash
+# Tag, sign, and push
+git tag -s vX.Y.Z -m "vX.Y.Z"
+git push origin vX.Y.Z
+
+# Create the GitHub release
+gh release create vX.Y.Z --title "vX.Y.Z" --notes "Release notes here."
+```
+
+## License
+
+[MIT](LICENSE.md)

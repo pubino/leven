@@ -32,7 +32,3 @@ Or open `Leven.xcodeproj` in Xcode after generating.
 - View current screen recording permission status.
 - Reset the TCC permission (requires app restart for macOS to re-prompt).
 - Open System Settings to the Screen Recording privacy pane.
-
-## License
-
-[MIT](LICENSE.md)
